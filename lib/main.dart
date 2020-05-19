@@ -15,6 +15,8 @@ class _HomeState extends State<Home> {
   TextEditingController weightController = TextEditingController();
   TextEditingController heightController = TextEditingController();
 
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   String _infoText = "Informe seus dados";
 
   void _resetField() {
@@ -23,10 +25,9 @@ class _HomeState extends State<Home> {
       heightController.text = "";
 
       _infoText = "Informe seus dados";
+      _formKey = GlobalKey<FormState>();
     });
   }
-
-  // double doubleParser(String value) => double.parser(value);
 
   void _calcImc() {
     setState(() {
@@ -66,54 +67,70 @@ class _HomeState extends State<Home> {
         ),
         backgroundColor: Colors.white,
         body: SingleChildScrollView(
-          padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Icon(
-                Icons.person,
-                size: 120,
-                color: Colors.green,
-              ),
-              TextField(
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  labelText: "Peso (km)",
-                  labelStyle: TextStyle(color: Colors.green),
-                ),
-                style: TextStyle(color: Colors.green, fontSize: 18.0),
-                controller: weightController,
-              ),
-              TextField(
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  labelText: "Altura (cm)",
-                  labelStyle: TextStyle(color: Colors.green),
-                ),
-                style: TextStyle(color: Colors.green, fontSize: 18.0),
-                controller: heightController,
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-                child: Container(
-                  height: 50.0,
-                  child: RaisedButton(
-                    child: Text(
-                      "Calcular IMC",
-                      style: TextStyle(color: Colors.white, fontSize: 18.0),
-                    ),
-                    onPressed: _calcImc,
+            padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Icon(
+                    Icons.person,
+                    size: 120,
                     color: Colors.green,
                   ),
-                ),
+                  TextFormField(
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      labelText: "Peso (km)",
+                      labelStyle: TextStyle(color: Colors.green),
+                    ),
+                    style: TextStyle(color: Colors.green, fontSize: 18.0),
+                    controller: weightController,
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return "Insira seu peso";
+                      }
+                    },
+                  ),
+                  TextFormField(
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      labelText: "Altura (cm)",
+                      labelStyle: TextStyle(color: Colors.green),
+                    ),
+                    style: TextStyle(color: Colors.green, fontSize: 18.0),
+                    controller: heightController,
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return "Insira sua altura";
+                      }
+                    },
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+                    child: Container(
+                      height: 50.0,
+                      child: RaisedButton(
+                        child: Text(
+                          "Calcular IMC",
+                          style: TextStyle(color: Colors.white, fontSize: 18.0),
+                        ),
+                        onPressed: () {
+                          if (_formKey.currentState.validate()) {
+                            _calcImc();
+                          }
+                        },
+                        color: Colors.green,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    _infoText,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.green, fontSize: 18.0),
+                  )
+                ],
               ),
-              Text(
-                _infoText,
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.green, fontSize: 18.0),
-              )
-            ],
-          ),
-        ));
+            )));
   }
 }
